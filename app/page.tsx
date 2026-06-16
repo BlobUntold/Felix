@@ -1,65 +1,192 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+type Product = {
+ id: string;
+ name: string;
+ slug: string;
+ short_description: string | null;
+ featured_image_url: string | null;
+};
+
+type PortfolioItem = {
+ id: string;
+ title: string;
+ slug: string;
+ description: string | null;
+ featured_image_url: string | null;
+};
+
+type SiteSettings = {
+ about_text: string | null;
+ home_hero_title: string | null;
+ home_hero_subtitle: string | null;
+ home_contact_text: string | null;
+ contact_email: string | null;
+ contact_phone: string | null;
+};
+
+export default async function HomePage() {
+ const [{ data: products }, { data: portfolioItems }, { data: settings }] =
+ await Promise.all([
+ supabase
+.from('products')
+.select('id, name, slug, short_description, featured_image_url')
+.eq('is_featured', true)
+.neq('status', 'draft')
+.order('sort_order', { ascending: true })
+.limit(3),
+ supabase
+.from('portfolio_items')
+.select('id, title, slug, description, featured_image_url')
+.eq('is_featured', true)
+.order('sort_order', { ascending: true })
+.limit(3),
+ supabase
+.from('site_settings')
+.select(
+ 'about_text, home_hero_title, home_hero_subtitle, home_contact_text, contact_email, contact_phone'
+ )
+.limit(1)
+.single(),
+ ]);
+
+ const site = settings as SiteSettings | null;
+
+ return (
+ <main>
+ <section className="page-section">
+ <div className="container-shell editorial-grid">
+ <div className="hero-copy">
+ <p className="eyebrow">Felix Gabino</p>
+ <h1 className="hero-title">
+ {site?.home_hero_title || 'Artisan tailoring with an edgy, modern voice.'}
+ </h1>
+ <p className="hero-subcopy">
+ {site?.home_hero_subtitle ||
+ 'Custom garments, evening pieces, and portfolio-led craftsmanship shaped through a luxury atelier perspective.'}
+ </p>
+
+ <div className="hero-actions">
+ <Link href="/shop" className="button-primary">
+ View Shop
+ </Link>
+ <Link href="/portfolio" className="button-secondary">
+ View Portfolio
+ </Link>
+ </div>
+ </div>
+
+ <div className="hero-media">
+ <div className="feature-panel luxury-image hero-image-frame">
+ <img src="/images/workshop.webp" alt="Artist in workshop" />
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <section className="page-section">
+ <div className="container-shell">
+ <p className="eyebrow">Featured Products</p>
+ <div className="section-head">
+ <h2 className="section-title">Selected pieces for the shop.</h2>
+ <Link href="/shop" className="button-secondary">
+ All Products
+ </Link>
+ </div>
+
+ <div className="card-grid">
+ {products?.map((product: Product) => (
+ <Link key={product.id} href={`/shop/${product.slug}`} className="luxury-card">
+ <div className="luxury-image">
+ {product.featured_image_url? (
+ <img src={product.featured_image_url} alt={product.name} />
+ ): (
+ <img src="/images/workshop.webp" alt={product.name} />
+ )}
+ </div>
+ <div className="card-body">
+ <p className="card-meta">Product</p>
+ <h3 className="card-title">{product.name}</h3>
+ <p className="card-copy">{product.short_description}</p>
+ </div>
+ </Link>
+ ))}
+ </div>
+ </div>
+ </section>
+
+ <section className="page-section">
+ <div className="container-shell">
+ <p className="eyebrow">Portfolio</p>
+ <div className="section-head">
+ <h2 className="section-title">Work shaped by image, silhouette, and detail.</h2>
+ <Link href="/portfolio" className="button-secondary">
+ Full Portfolio
+ </Link>
+ </div>
+
+ <div className="card-grid">
+ {portfolioItems?.map((item: PortfolioItem) => (
+ <Link key={item.id} href={`/portfolio/${item.slug}`} className="luxury-card">
+ <div className="luxury-image">
+ {item.featured_image_url? (
+ <img src={item.featured_image_url} alt={item.title} />
+ ): (
+ <img src="/images/workshop.webp" alt={item.title} />
+ )}
+ </div>
+ <div className="card-body">
+ <p className="card-meta">Portfolio</p>
+ <h3 className="card-title">{item.title}</h3>
+ <p className="card-copy">{item.description}</p>
+ </div>
+ </Link>
+ ))}
+ </div>
+ </div>
+ </section>
+
+ <section className="page-section">
+ <div className="container-shell split-callout">
+ <div>
+ <p className="eyebrow">About</p>
+ <h2 className="section-title">A boutique atelier approach.</h2>
+ <p className="section-copy">
+ {site?.about_text ||
+ 'Felix Gabino is a fashion atelier focused on artisan construction, sharp silhouettes, and personal design experiences.'}
+ </p>
+ </div>
+
+ <div className="contact-stack">
+ <div className="info-panel">
+ <img src="/images/workshop.webp" alt="Artist in workshop" className="about-image" />
+ </div>
+
+ <div className="info-panel">
+ <p className="card-meta">Contact</p>
+ <p>
+ {site?.home_contact_text ||
+ 'For custom orders, fittings, and consultations, get in touch by email or WhatsApp.'}
+ </p>
+ </div>
+
+ {site?.contact_email? (
+ <div className="info-panel">
+ <p className="card-meta">Email</p>
+ <p>{site.contact_email}</p>
+ </div>
+ ): null}
+
+ {site?.contact_phone? (
+ <div className="info-panel">
+ <p className="card-meta">Phone</p>
+ <p>{site.contact_phone}</p>
+ </div>
+ ): null}
+ </div>
+ </div>
+ </section>
+ </main>
+ );
 }
