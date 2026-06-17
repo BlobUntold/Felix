@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type PortfolioImage = {
  id: string;
@@ -25,6 +25,8 @@ type PageProps = {
 
 export default async function PortfolioItemPage({ params }: PageProps) {
  const { slug } = await params;
+
+ const supabase = await createSupabaseServerClient();
 
  const { data: item, error } = await supabase
 .from('portfolio_items')

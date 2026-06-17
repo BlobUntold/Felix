@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type PortfolioItem = {
  id: string;
@@ -11,10 +11,11 @@ type PortfolioItem = {
 };
 
 export default async function PortfolioPage() {
+ const supabase = await createSupabaseServerClient();
  const { data: items, error } = await supabase
-.from('portfolio_items')
-.select('id, title, slug, description, is_featured, featured_image_url')
-.order('sort_order', { ascending: true });
+	.from('portfolio_items')
+	.select('id, title, slug, description, featured_image_url, is_featured')
+	.order('sort_order', { ascending: true });
 
  if (error) {
  return (

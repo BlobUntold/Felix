@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type Product = {
  id: string;
@@ -57,6 +57,8 @@ function formatPrice(product: Product) {
 
 export default async function ProductPage({ params }: PageProps) {
  const { slug } = await params;
+
+ const supabase = await createSupabaseServerClient();
 
  const { data: product, error } = await supabase
 .from('products')

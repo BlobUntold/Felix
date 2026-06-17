@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type Product = {
  id: string;
@@ -18,10 +18,11 @@ type PortfolioItem = {
 };
 
 type SiteSettings = {
- about_text: string | null;
+export default async function HomePage() {
+ const supabase = await createSupabaseServerClient();
  home_hero_title: string | null;
  home_hero_subtitle: string | null;
- home_contact_text: string | null;
+ const { data: products } = await supabase
  contact_email: string | null;
  contact_phone: string | null;
 };

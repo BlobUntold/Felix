@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type Product = {
  id: string;
@@ -27,11 +27,12 @@ function formatPricingLabel(product: Product) {
 }
 
 export default async function ShopPage() {
- const { data: products, error } = await supabase
-.from('products')
-.select('id, name, slug, short_description, status, pricing_mode, featured_image_url')
-.neq('status', 'draft')
-.order('sort_order', { ascending: true });
+	const supabase = await createSupabaseServerClient();
+	const { data: products, error } = await supabase
+		.from('products')
+		.select('id, name, slug, short_description, status, pricing_mode, featured_image_url')
+		.neq('status', 'draft')
+		.order('sort_order', { ascending: true });
 
  if (error) {
  return (
