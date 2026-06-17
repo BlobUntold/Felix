@@ -2,57 +2,58 @@ import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type Product = {
- id: string;
- name: string;
- slug: string;
- short_description: string | null;
- featured_image_url: string | null;
+	id: string;
+	name: string;
+	slug: string;
+	short_description: string | null;
+	featured_image_url: string | null;
 };
 
 type PortfolioItem = {
- id: string;
- title: string;
- slug: string;
- description: string | null;
- featured_image_url: string | null;
+	id: string;
+	title: string;
+	slug: string;
+	description: string | null;
+	featured_image_url: string | null;
 };
 
 type SiteSettings = {
-export default async function HomePage() {
- const supabase = await createSupabaseServerClient();
- home_hero_title: string | null;
- home_hero_subtitle: string | null;
- const { data: products } = await supabase
- contact_email: string | null;
- contact_phone: string | null;
+	about_text?: string | null;
+	home_hero_title?: string | null;
+	home_hero_subtitle?: string | null;
+	home_contact_text?: string | null;
+	contact_email?: string | null;
+	contact_phone?: string | null;
 };
 
 export default async function HomePage() {
- const [{ data: products }, { data: portfolioItems }, { data: settings }] =
- await Promise.all([
- supabase
-.from('products')
-.select('id, name, slug, short_description, featured_image_url')
-.eq('is_featured', true)
-.neq('status', 'draft')
-.order('sort_order', { ascending: true })
-.limit(3),
- supabase
-.from('portfolio_items')
-.select('id, title, slug, description, featured_image_url')
-.eq('is_featured', true)
-.order('sort_order', { ascending: true })
-.limit(3),
- supabase
-.from('site_settings')
-.select(
- 'about_text, home_hero_title, home_hero_subtitle, home_contact_text, contact_email, contact_phone'
- )
-.limit(1)
-.single(),
- ]);
+	const supabase = await createSupabaseServerClient();
 
- const site = settings as SiteSettings | null;
+	const [{ data: products }, { data: portfolioItems }, { data: settings }] =
+		await Promise.all([
+			supabase
+				.from('products')
+				.select('id, name, slug, short_description, featured_image_url')
+				.eq('is_featured', true)
+				.neq('status', 'draft')
+				.order('sort_order', { ascending: true })
+				.limit(3),
+			supabase
+				.from('portfolio_items')
+				.select('id, title, slug, description, featured_image_url')
+				.eq('is_featured', true)
+				.order('sort_order', { ascending: true })
+				.limit(3),
+			supabase
+				.from('site_settings')
+				.select(
+					'about_text, home_hero_title, home_hero_subtitle, home_contact_text, contact_email, contact_phone'
+				)
+				.limit(1)
+				.single(),
+		]);
+
+	const site = settings as SiteSettings | null;
 
  return (
  <main>
