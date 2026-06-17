@@ -55,31 +55,92 @@ export default async function HomePage() {
 
  return (
  <main>
- <section className="page-section">
- <div className="container-shell editorial-grid">
- <div className="hero-copy">
+ <section className="hero-shell">
+ <div className="container-shell hero-grid-premium">
+ <div className="hero-panel hero-panel-copy">
  <p className="eyebrow">Felix Gabino</p>
- <h1 className="hero-title">
- {site?.home_hero_title || 'Artisan tailoring with an edgy, modern voice.'}
+
+ <h1 className="hero-title hero-title-premium">
+ {site?.home_hero_title || 'Custom garments shaped through an artisan atelier lens.'}
  </h1>
- <p className="hero-subcopy">
+
+ <p className="hero-subcopy hero-subcopy-premium">
  {site?.home_hero_subtitle ||
- 'Custom garments, evening pieces, and portfolio-led craftsmanship shaped through a luxury atelier perspective.'}
+ 'A fashion-focused atelier for bridal, evening, and custom pieces with a personal, design-led approach.'}
  </p>
 
- <div className="hero-actions">
- <Link href="/shop" className="button-primary">
- View Shop
+ <div className="hero-actions hero-actions-premium">
+ <Link href="/custom-orders" className="button-primary">
+ Start a Custom Order
  </Link>
  <Link href="/portfolio" className="button-secondary">
  View Portfolio
  </Link>
+ <Link href="/shop" className="button-secondary">
+ Shop Pieces
+ </Link>
+ </div>
+
+ <div className="hero-points">
+ <div className="hero-point">
+ <span className="hero-point-label">Bridal</span>
+ </div>
+ <div className="hero-point">
+ <span className="hero-point-label">Evening</span>
+ </div>
+ <div className="hero-point">
+ <span className="hero-point-label">Custom Work</span>
+ </div>
  </div>
  </div>
 
- <div className="hero-media">
- <div className="feature-panel luxury-image hero-image-frame">
- <img src="/images/workshop.webp" alt="Artist in workshop" />
+ <div className="hero-panel hero-panel-image">
+ <img src="/images/duo.png" alt="Felix Gabino editorial desert shoot" className="hero-main-image" />
+ <div className="hero-image-overlay-card">
+ <p className="card-meta">Felix Gabino</p>
+ <p className="hero-overlay-copy">
+ Bridal, evening, and custom garments with an artisan approach to silhouette,
+ finish, and image.
+ </p>
+</div>
+ </div>
+ </div>
+ </section>
+
+ <section className="page-section">
+ <div className="container-shell">
+ <div className="conversion-strip">
+ <div className="conversion-card">
+ <p className="card-meta">Shop</p>
+ <h3>Explore ready pieces</h3>
+ <p className="section-copy">
+ View selected garments available for purchase or inquiry.
+ </p>
+ <Link href="/shop" className="text-link">
+ Enter shop
+ </Link>
+ </div>
+
+ <div className="conversion-card">
+ <p className="card-meta">Portfolio</p>
+ <h3>View finished work</h3>
+ <p className="section-copy">
+ See bridal, evening, and custom atelier projects in more detail.
+ </p>
+ <Link href="/portfolio" className="text-link">
+ View portfolio
+ </Link>
+ </div>
+
+ <div className="conversion-card">
+ <p className="card-meta">Custom Orders</p>
+ <h3>Request a consultation</h3>
+ <p className="section-copy">
+ Start a booking or inquiry for a more personal custom process.
+ </p>
+ <Link href="/custom-orders" className="text-link">
+ Start request
+ </Link>
  </div>
  </div>
  </div>
@@ -146,24 +207,22 @@ export default async function HomePage() {
  </div>
  </div>
  </section>
-
  <section className="page-section">
- <div className="container-shell split-callout">
+ <div className="container-shell">
+ <section className="about-background-section">
+ <div className="about-background-overlay">
+ <div className="about-background-content">
  <div>
  <p className="eyebrow">About</p>
  <h2 className="section-title">A boutique atelier approach.</h2>
- <p className="section-copy">
+ <p className="section-copy about-section-copy">
  {site?.about_text ||
  'Felix Gabino is a fashion atelier focused on artisan construction, sharp silhouettes, and personal design experiences.'}
  </p>
  </div>
 
  <div className="contact-stack">
- <div className="info-panel">
- <img src="/images/workshop.webp" alt="Artist in workshop" className="about-image" />
- </div>
-
- <div className="info-panel">
+ <div className="info-panel info-panel-overlay">
  <p className="card-meta">Contact</p>
  <p>
  {site?.home_contact_text ||
@@ -172,21 +231,30 @@ export default async function HomePage() {
  </div>
 
  {site?.contact_email? (
- <div className="info-panel">
+ <div className="info-panel info-panel-overlay">
  <p className="card-meta">Email</p>
  <p>{site.contact_email}</p>
  </div>
  ): null}
 
  {site?.contact_phone? (
- <div className="info-panel">
+ <div className="info-panel info-panel-overlay">
  <p className="card-meta">Phone</p>
  <p>{site.contact_phone}</p>
  </div>
  ): null}
+
+ <div className="info-panel info-panel-overlay">
+ <Link href="/custom-orders" className="button-primary">
+ Book or Inquire
+ </Link>
+ </div>
+ </div>
  </div>
  </div>
  </section>
+ </div>
+</section>
  </main>
  );
 }
